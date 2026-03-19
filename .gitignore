@@ -2,21 +2,18 @@
 __pycache__/
 *.py[cod]
 *.pyo
-.Python
 *.egg-info/
 dist/
 build/
 .eggs/
+.Python
 
 # Virtual environments
 .venv/
 venv/
 env/
 ENV/
-
-# Jupyter
-.ipynb_checkpoints/
-*.ipynb
+.geovenv/
 
 # Data files (large — track with Git LFS or exclude entirely)
 data/raw/**/*.zip
@@ -28,19 +25,18 @@ data/raw/**/owid-co2-data.csv
 data/raw/**/world_population.csv
 data/cache/
 
-# Keep processed data marker files
+# Keep marker files in raw data
 !data/raw/**/.downloaded
 
 # Outputs (regeneratable — optionally exclude)
-# outputs/figures/
-# outputs/interactive/
+outputs/
 
-# OS
+# OS files
 .DS_Store
 Thumbs.db
 desktop.ini
 
-# IDEs
+# IDEs / editors
 .vscode/
 .idea/
 *.swp
@@ -49,31 +45,20 @@ desktop.ini
 # Environment variables
 .env
 .env.local
+.env.example
 
 # Logs
 *.log
 logs/
+flake8_output.txt
 
 # Report drafts
 report/drafts/
 
-# Large binary outputs (keep PNGs but not raw shapefiles in git)
+# Large binary outputs (keep PNGs but not raw shapefiles)
 *.shp
 *.dbf
 *.shx
 *.prj
 *.cpg
 *.qpj
-
-# Environment
-.env
-.env.example
-.geovenv/
-
-# Data
-data/
-outputs/
-
-# Logs / temp files
-*.log
-flake8_output.txt
