@@ -1,4 +1,4 @@
-# 🌍 GeoMetric Project — Global Climate & Mobility Atlas
+# 🌍 GeoMetric Project - Global Climate & Mobility Atlas
 
 A comprehensive geospatial data visualization assignment covering 7 mapping
 techniques plus bonus interactive features. Built with Python, GeoPandas,
