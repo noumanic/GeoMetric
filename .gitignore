@@ -64,3 +64,16 @@ report/drafts/
 *.prj
 *.cpg
 *.qpj
+
+# Environment
+.env
+.env.example
+.geovenv/
+
+# Data
+data/
+outputs/
+
+# Logs / temp files
+*.log
+flake8_output.txt
