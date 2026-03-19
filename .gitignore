@@ -1,0 +1,66 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Data files (large — track with Git LFS or exclude entirely)
+data/raw/**/*.zip
+data/raw/**/*.tar.gz
+data/raw/**/*.nc
+data/raw/**/airports.dat
+data/raw/**/routes.dat
+data/raw/**/owid-co2-data.csv
+data/raw/**/world_population.csv
+data/cache/
+
+# Keep processed data marker files
+!data/raw/**/.downloaded
+
+# Outputs (regeneratable — optionally exclude)
+# outputs/figures/
+# outputs/interactive/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment variables
+.env
+.env.local
+
+# Logs
+*.log
+logs/
+
+# Report drafts
+report/drafts/
+
+# Large binary outputs (keep PNGs but not raw shapefiles in git)
+*.shp
+*.dbf
+*.shx
+*.prj
+*.cpg
+*.qpj
