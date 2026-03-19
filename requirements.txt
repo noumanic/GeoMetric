@@ -1,0 +1,76 @@
+# ============================================================
+# GeoMetric Project – Full Dependency List
+# Install with: pip install -r requirements.txt
+# Python version: 3.10+ (tested on 3.10, 3.11, 3.12)
+# ============================================================
+
+# --- Core Data ---
+numpy>=1.24.0
+pandas>=2.0.0
+openpyxl>=3.1.0           # Excel file support
+
+# --- Spatial / GIS ---
+geopandas>=0.14.0
+shapely>=2.0.0
+pyproj>=3.6.0
+fiona>=1.9.0
+rtree>=1.0.0               # Spatial indexing for geopandas
+
+# --- Map Classification ---
+mapclassify>=2.6.0         # Quantile, natural breaks, equal interval
+
+# --- Visualization – Static ---
+matplotlib>=3.7.0
+matplotlib-scalebar>=0.8.0
+seaborn>=0.12.0
+contextily>=1.4.0          # Basemap tiles for static maps
+cartopy>=0.22.0            # Projections (Winkel Tripel, Robinson etc.)
+
+# --- Visualization – Interactive ---
+folium>=0.15.0             # Leaflet-based interactive maps
+plotly>=5.18.0             # Interactive charts + animations
+dash>=2.14.0               # Dashboard framework
+dash-bootstrap-components>=1.5.0
+
+# --- Network Analysis ---
+networkx>=3.2.0            # Flow map network graphs
+
+# --- Spatial Interpolation ---
+scipy>=1.11.0              # IDW, RBF interpolation
+scikit-learn>=1.3.0        # KNN, grid interpolation
+
+# --- Spatial Statistics ---
+# Install sub-packages directly — avoids pysal meta-package Python version conflicts
+libpysal>=4.9.0            # Spatial weights + core utilities
+esda>=2.5.0                # Moran's I, LISA, exploratory spatial analysis
+splot>=1.1.7               # PySAL visualization
+# NOTE: splot 1.1.7 requires Python <3.13. On Python 3.13+ skip splot,
+#       the Moran's I scatter plot will gracefully fall back in bonus_morans_i.py
+
+# --- Cartogram ---
+# No external package needed — Dorling cartogram is implemented manually
+# in part6_cartogram.py using matplotlib scatter (proportional circles)
+
+# --- Street Network / Routing (Bonus) ---
+osmnx>=1.7.0               # OpenStreetMap network analysis
+
+# --- Data Download ---
+requests>=2.31.0
+tqdm>=4.66.0               # Progress bars for downloads
+pooch>=1.7.0               # Reproducible data downloads
+
+# --- Notebook Support ---
+jupyter>=1.0.0
+jupyterlab>=4.0.0
+ipykernel>=6.25.0
+ipywidgets>=8.1.0
+
+# --- Report / Export ---
+Pillow>=10.0.0             # Image processing
+kaleido>=0.2.1             # Plotly static image export
+nbconvert>=7.8.0           # Convert notebooks to PDF/HTML
+
+# --- Code Quality ---
+black>=23.0.0              # Formatter
+flake8>=6.1.0              # Linter
+pytest>=7.4.0              # Testing
