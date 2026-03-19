@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Data Preprocessing & Engineering Report</title>
+    <!-- Tailwind CSS for sleek styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Highlight.js for Python syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark-reasonable.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/python.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script>hljs.highlightAll();</script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #334155; }
+        .card { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); overflow: hidden; margin-bottom: 2rem; }
+        .card-header { background: #0f172a; color: white; padding: 1.5rem; }
+        .code-block { border-radius: 8px; font-size: 0.9rem; margin: 1rem 0; overflow-x: auto;}
+        .stat-box { background: #f1f5f9; padding: 1rem; border-radius: 8px; text-align: center; }
+        .stat-number { font-size: 1.5rem; font-weight: 800; color: #2563eb; }
+        .arrow { color: #94a3b8; font-size: 1.5rem; margin: 0 1rem; }
+        .bg-gradient { background: linear-gradient(90deg, #1e293b 0%, #0f172a 100%); }
+    </style>
+</head>
+<body class="p-8 max-w-6xl mx-auto">
+
+    <header class="mb-12 text-center pb-8 border-b border-gray-200">
+        <h1 class="text-5xl font-extrabold text-slate-900 tracking-tight mb-4">Pipeline Architecture & Transformation</h1>
+        <p class="text-xl text-slate-500 max-w-3xl mx-auto">High-level documentation and interpretation of dataset transformations from raw unstructured files into high-integrity dimensional models.</p>
+    </header>
+
+    <!-- 1. WORLD BOUNDARIES -->
+    <div class="card">
+        <div class="card-header bg-gradient flex justify-between items-center">
+            <div>
+                <h2 class="text-2xl font-bold">1. Spatial Geometries (World Boundaries)</h2>
+                <p class="text-slate-400 text-sm mt-1">Source: Natural Earth (110m Admin 0)</p>
+            </div>
+            <span class="px-3 py-1 bg-blue-600 rounded-full text-xs font-bold font-mono">GeoDataFrame</span>
+        </div>
+        
+        <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6 items-center border-b border-gray-100">
+            <!-- Before -->
+            <div class="stat-box">
+                <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">RAW STATE</h3>
+                <div class="font-mono text-sm text-left mb-2 text-red-600">
+                    <div>Rows: 177 / Cols: 95</div>
+                    <div>Issues: Mixed text cases, '-99' critical missing ISO codes</div>
+                </div>
+                <div class="text-xs text-left text-slate-600 mt-2"><b>Columns include:</b> NAME_LONG, POP_EST, ISO_A3</div>
+            </div>
+            
+            <div class="text-center font-bold text-slate-300">➔ PREPROCESS ➔</div>
+            
+            <!-- After -->
+            <div class="stat-box">
+                <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">PROCESSED (GPKG)</h3>
+                <div class="font-mono text-sm text-left mb-2 text-green-600">
+                    <div>Rows: 176 / Cols: 8</div>
+                    <div>Issues Fixed: Perfect ISO standardization.</div>
+                </div>
+                <div class="text-xs text-left text-slate-600 mt-2"><b>Columns strictly filtered:</b> iso_a3, country_name, pop_est, geometry</div>
+            </div>
+        </div>
+
+        <div class="p-6 bg-slate-50">
+            <h4 class="font-bold text-sm uppercase text-slate-500 mb-2">Transformation Logic</h4>
+            <p class="text-sm text-slate-700 mb-3">The raw geojson has highly inconsistent variable naming and notorious "-99" ISO code bugs for nations like France and Norway. The pipeline manually patches these holes and strictly shrinks the 95 metadata columns down to only the 8 required.</p>
+            <pre class="code-block"><code class="language-python"># Fix known ISO code issues in Natural Earth (Critical manual patch)
+fixes = {"France": "FRA", "Norway": "NOR", "Kosovo": "XKX", "Somaliland": "SOM"}
+for name, iso in fixes.items():
+    world.loc[world["country_name"] == name, "iso_a3"] = iso
+
+# Drop lingering invalid geometries and standardize to pure unprojected spherical
+world = world[world["iso_a3"] != "-99"]
+world = world.set_crs("EPSG:4326", allow_override=True)
+world.to_file(PATHS["processed"] / "world_countries.gpkg", driver="GPKG")</code></pre>
+        </div>
+    </div>
+
+    <!-- 2. GLOBAL EMISSIONS -->
+    <div class="card">
+        <div class="card-header bg-gradient flex justify-between items-center">
+            <div>
+                <h2 class="text-2xl font-bold">2. Global Emissions Database</h2>
+                <p class="text-slate-400 text-sm mt-1">Source: Our World in Data (OWID CO₂)</p>
+            </div>
+            <span class="px-3 py-1 bg-green-600 rounded-full text-xs font-bold font-mono">Pandas DataFrame</span>
+        </div>
+        
+        <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6 items-center border-b border-gray-100">
+            <!-- Before -->
+            <div class="stat-box">
+                <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">RAW HISTORICAL CSV</h3>
+                <div class="font-mono text-sm text-left mb-2 text-red-600">
+                    <div>Rows: ~46,000 / Cols: 79</div>
+                    <div>Issues: Data from 1750-2022, mixed regions (OWID_WRL), missing per_capita</div>
+                </div>
+            </div>
+            <div class="text-center font-bold text-slate-300">➔ PREPROCESS ➔</div>
+            <!-- After -->
+            <div class="stat-box">
+                <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">TARGET YEAR (2020)</h3>
+                <div class="font-mono text-sm text-left mb-2 text-green-600">
+                    <div>Rows: ~196 / Cols: 13</div>
+                    <div>Issues Fixed: No regional aggregates, per-capita dynamically mathematically imputed.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-6 bg-slate-50">
+            <h4 class="font-bold text-sm uppercase text-slate-500 mb-2">Transformation Logic</h4>
+            <p class="text-sm text-slate-700 mb-3">To avoid spatial mapping errors, all pseudo-countries (like "High-income countries" starting with OWID_) are dropped via string filtering. Critically, if `co2_per_capita` is `NaN` but total population exists, the pipeline dynamically calculates the ratio to prevent missing geographic blobs.</p>
+            <pre class="code-block"><code class="language-python"># Filter strictly to the analysis year (2020)
+df = load_emissions(ANALYSIS_YEAR)
+
+# Impute missing per-capita metrics (Fail-safe interpolation)
+mask = df["co2_per_capita"].isna() & df["co2_total"].notna() & df["population"].notna()
+df.loc[mask, "co2_per_capita"] = df.loc[mask, "co2_total"] * 1e6 / df.loc[mask, "population"]
+df.to_csv("emissions_2020.csv", index=False)</code></pre>
+        </div>
+    </div>
+
+    <!-- 3. DEMOGRAPHICS & POPULATION -->
+    <div class="card">
+        <div class="card-header bg-gradient flex justify-between items-center">
+            <div>
+                <h2 class="text-2xl font-bold">3. Demographics & Population</h2>
+                <p class="text-slate-400 text-sm mt-1">Source: World Bank & OWID Fallback</p>
+            </div>
+            <span class="px-3 py-1 bg-yellow-600 rounded-full text-xs font-bold font-mono">Pandas DataFrame</span>
+        </div>
+        
+        <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6 items-center border-b border-gray-100">
+            <!-- Before -->
+            <div class="stat-box">
+                <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">RAW STATE</h3>
+                <div class="font-mono text-sm text-left mb-2 text-red-600">
+                    <div>Format: Inconsistent CSVs</div>
+                    <div>Issues: Multi-year arrays, missing standardization</div>
+                </div>
+            </div>
+            <div class="text-center font-bold text-slate-300">➔ PREPROCESS ➔</div>
+            <!-- After -->
+            <div class="stat-box">
+                <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">PROCESSED (2020)</h3>
+                <div class="font-mono text-sm text-left mb-2 text-green-600">
+                    <div>Cols: iso_a3, population</div>
+                    <div>Issues Fixed: Unified format with Fallback logic.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-6 bg-slate-50">
+            <h4 class="font-bold text-sm uppercase text-slate-500 mb-2">Transformation Logic</h4>
+            <p class="text-sm text-slate-700 mb-3">World Bank API downloads often change column headers. The script gracefully normalizes column names and extracts exactly the target year's population. If World Bank data fails, it executes a fallback trap to pull the population from the Our World in Data emissions dataset instead.</p>
+            <pre class="code-block"><code class="language-python"># Dynamic header normalizer
+df.columns = [c.strip().lower().replace(" ", "_") for c in df.columns]
+
+# Fallback mechanism if World Bank data is missing
+except Exception:
+    print("  ⚠️  Falling back to OWID population data...")
+    raw = load_emissions(ANALYSIS_YEAR)
+    df = raw[["iso_code", "population"]].dropna().copy()</code></pre>
+        </div>
+    </div>
+
+    <!-- 4. AVIATION NETWORK -->
+    <div class="card">
+        <div class="card-header bg-gradient flex justify-between items-center">
+            <div>
+                <h2 class="text-2xl font-bold">4. Global Aviation Network</h2>
+                <p class="text-slate-400 text-sm mt-1">Source: OpenFlights Airports.dat & Routes.dat</p>
+            </div>
+            <span class="px-3 py-1 bg-purple-600 rounded-full text-xs font-bold font-mono">Relational Fact Merge</span>
+        </div>
+        
+        <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6 items-center border-b border-gray-100">
+            <!-- Before -->
+            <div class="stat-box">
+                <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">RAW ISOLATED FILES</h3>
+                <div class="font-mono text-sm text-left mb-2 text-red-600">
+                    <div>Airports: 7,000+ nodes (Has Coordinates)</div>
+                    <div>Routes: 67,000+ edges (No Coordinates)</div>
+                </div>
+            </div>
+            <div class="text-center font-bold text-slate-300">➔ PREPROCESS ➔</div>
+            <!-- After -->
+            <div class="stat-box">
+                <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">ENRICHED DIMENSIONS</h3>
+                <div class="font-mono text-sm text-left mb-2 text-green-600">
+                    <div>Airports: Have 'total_routes' score</div>
+                    <div>Routes: Have src_lat, src_lon, dst_lat, dst_lon</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-6 bg-slate-50">
+            <h4 class="font-bold text-sm uppercase text-slate-500 mb-2">Transformation Logic</h4>
+            <p class="text-sm text-slate-700 mb-3">This executes classic dimensional data modeling. We group the raw Flight Lines (Fact Table) to count departures, merging that metric *into* the Airports (Dimension) to rank hub size. We then create a spatial dictionary to reverse-inject the Latitude/Longitude of the hubs *back into* the Flight Lines so matplotlib can plot Origin ➔ Destination lines physically.</p>
+            <pre class="code-block"><code class="language-python"># 1. Feature Engineering: Compute graph degree/centrality for each airport
+src_count = routes.groupby("src_iata").size().reset_index(name="departures")
+airports = airports.merge(src_count, left_on="iata", right_on="src_iata", how="left")
+airports["total_routes"] = airports["departures"].fillna(0) + airports["arrivals"].fillna(0)
+
+# 2. Spatial Enabing: Attach coordinates to raw routes for matplotlib line plotting
+coord_map = airports.set_index("iata")[["lat", "lon", "country"]].to_dict("index")
+routes["src_lat"] = routes["src_iata"].map(lambda x: coord_map.get(x, {}).get("lat", np.nan))
+routes["dst_lon"] = routes["dst_iata"].map(lambda x: coord_map.get(x, {}).get("lon", np.nan))</code></pre>
+        </div>
+    </div>
+
+    <!-- 5. CLIMATE & TEMPERATURE -->
+    <div class="card">
+        <div class="card-header bg-gradient flex justify-between items-center">
+            <div>
+                <h2 class="text-2xl font-bold">5. Climate & Temperature Station Data</h2>
+                <p class="text-slate-400 text-sm mt-1">Source: Global Surface Summary of the Day (GSOD) / Simulated</p>
+            </div>
+            <span class="px-3 py-1 bg-orange-600 rounded-full text-xs font-bold font-mono">Station Scatter</span>
+        </div>
+        
+        <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6 items-center border-b border-gray-100">
+            <!-- Before -->
+            <div class="stat-box">
+                <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">RAW SENSORS</h3>
+                <div class="font-mono text-sm text-left mb-2 text-red-600">
+                    <div>Rows: 6,000+ unverified stations</div>
+                    <div>Issues: Corrupt coordinates, null values</div>
+                </div>
+            </div>
+            <div class="text-center font-bold text-slate-300">➔ PREPROCESS ➔</div>
+            <!-- After -->
+            <div class="stat-box">
+                <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">CLEANED SENSORS</h3>
+                <div class="font-mono text-sm text-left mb-2 text-green-600">
+                    <div>Issues Fixed: Strict geographical bound checks.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-6 bg-slate-50">
+            <h4 class="font-bold text-sm uppercase text-slate-500 mb-2">Transformation Logic</h4>
+            <p class="text-sm text-slate-700 mb-3">Environmental sensor data frequently contains hardware blips (e.g., coordinates reading as 999.99 or absolute zeroes). This pipeline executes a strict bounding box cull, immediately dropping any stations that claim to exist outside the bounds of Planet Earth.</p>
+            <pre class="code-block"><code class="language-python"># Validate coordinate boundaries to discard corrupt sensors
+df = df.dropna(subset=["lat", "lon", "mean_temp_c"])
+df = df[df["lat"].between(-90, 90) & df["lon"].between(-180, 180)]
+
+df.to_csv("temperature_stations.csv", index=False)</code></pre>
+        </div>
+    </div>
+
+    <!-- 6. MASTER FILE -->
+    <div class="card border-2 border-emerald-500 border-opacity-50">
+        <div class="card-header !bg-emerald-900 flex justify-between items-center">
+            <div>
+                <h2 class="text-2xl font-bold">6. Master Database Integration</h2>
+                <p class="text-emerald-300 text-sm mt-1">The primary artifact used for parts 1 through 7 mapping analysis.</p>
+            </div>
+            <span class="px-3 py-1 bg-emerald-500 rounded-full text-xs font-bold text-white font-mono">Master GeoPackage</span>
+        </div>
+        
+        <div class="p-6">
+            <h4 class="font-bold text-sm uppercase text-slate-500 mb-2">Transformation Logic</h4>
+            <p class="text-sm text-slate-700 mb-4">The previous cleaned files are relationally joined via a `Left Join` on `iso_a3`. A crucial final safety net step establishes `pop_final`: if external World Bank population metrics missed a tiny nation, the spatial base-map estimate seamlessly steps in.</p>
+            <pre class="code-block"><code class="language-python"># Left join: Geometries + Emissions + Demographics
+master = world.merge(emiss, on="iso_a3", how="left")
+master = master.merge(pop, on="iso_a3", how="left")
+
+# Final algorithmic imputation & feature generation
+master["pop_final"] = master["population"].fillna(master["pop_est"])
+master["area_km2"] = master.to_crs("+proj=cea").geometry.area / 1e6
+master["pop_density"] = master["pop_final"] / master["area_km2"]
+
+# Expose to analysts
+master.to_file(PATHS["processed"] / "master_world.gpkg", driver="GPKG")</code></pre>
+        </div>
+    </div>
+    
+    <div class="text-center text-slate-400 text-sm mt-8 mb-4">
+        <i>Generated by Antigravity Engineering Toolkit | Data is immediately queryable across all Python map classes post-pipeline.</i>
+    </div>
+
+</body>
+</html>

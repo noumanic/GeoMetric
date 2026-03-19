@@ -1,0 +1,549 @@
+Assignment 2: Multi-Map Spatial Analytics 
+in Python 
+Title 
+From Raw Spatial Data to Insightful Maps: A Python-Based Geospatial Visualization 
+Assignment 
+Objective 
+You are hired as a junior geospatial data analyst. Your task is to build a small map analytics 
+portfolio in Python using multiple real-world datasets. You must solve different spatial problems 
+using different map types, justify your design decisions, and reflect on the strengths and 
+weaknesses of each visualization. 
+This assignment is not only about plotting maps. It is about answering the question: 
+When is a map necessary, which map type is appropriate, and what distortions or misleading 
+effects must be considered? 
+Learning Outcomes 
+By the end of this assignment, you should be able to: 
+1. Load, clean, merge, and visualize geospatial datasets in Python. 
+2. Choose appropriate map types for different spatial questions. 
+3. Explain when a choropleth, proportional symbol map, contour map, flow map, or 
+cartogram is appropriate. 
+4. Use and compare projections. 
+5. Avoid misleading geographic representations. 
+6. Build reproducible geospatial analysis workflows. 
+Required Python Stack 
+You should use Python and are encouraged to use these libraries: 
+• 
+pandas 
+• 
+geopandas 
+• 
+matplotlib 
+• 
+plotly or folium for interactive maps 
+• 
+contextily for basemaps 
+
+• 
+shapely 
+• 
+pyproj 
+• 
+numpy 
+• 
+scipy 
+• 
+networkx for flow/network work 
+• 
+cartopy or geoplot if desired 
+Optional: 
+• 
+geemap 
+• 
+osmnx 
+• 
+rasterio 
+• 
+scikit-learn 
+ 
+Deliverables 
+You must submit: 
+1. Python notebook(s) or .py scripts 
+2. A report in PDF format, 8–12 pages 
+3. Exported map figures in PNG format 
+4. One interactive map in HTML 
+ 
+Assignment Structure 
+Part 0 – Dataset Collection and Documentation 
+Students must collect at least 4 different datasets, each serving a different map problem. 
+Minimum required dataset categories 
+They must use datasets from at least these categories: 
+1. Polygon/area dataset 
+Example: states, districts, counties, census tracts 
+2. Point dataset 
+Example: city coordinates, hospitals, earthquakes, pollution stations 
+3. Flow/movement dataset 
+Example: migration, trade, transportation, commuting, airline routes 
+
+4. Continuous spatial field dataset 
+Example: temperature, rainfall, pollution, elevation, wind 
+Suggested dataset sources 
+• 
+Natural Earth 
+• 
+US Census TIGER/Line 
+• 
+World Bank 
+• 
+NOAA 
+• 
+NASA EarthData 
+• 
+OpenStreetMap 
+• 
+WHO / CDC 
+• 
+Kaggle 
+• 
+Our World in Data 
+• 
+local government open data portals 
+Deliverable 
+A table with: 
+• 
+dataset name 
+• 
+source 
+• 
+file type 
+• 
+geometry type 
+• 
+spatial extent 
+• 
+variables used 
+• 
+why selected 
+ 
+Part 1 – Projection Challenge 
+Problem 
+Create the same world or national dataset using at least three different projections and 
+analyze how interpretation changes. 
+Required projections 
+Choose at least 3 from: 
+• 
+Mercator 
+• 
+Equirectangular 
+• 
+Azimuthal 
+
+• 
+Albers Equal-Area 
+• 
+Lambert Conformal Conic 
+• 
+Winkel Tripel or Robinson if available 
+Tasks 
+1. Plot the same dataset in 3 projections. 
+2. Explain what is preserved and what is distorted. 
+3. Identify which projection is most appropriate for: 
+o navigation 
+o thematic comparison by area 
+o general educational world map 
+Example datasets 
+• 
+world population by country 
+• 
+greenhouse gas emissions 
+• 
+country area vs population 
+Expected insight 
+Students should show that projection is not a cosmetic choice; it changes perception of area, 
+distance, and direction. 
+Output 
+• 
+3 maps 
+• 
+1 comparison table 
+• 
+1 short discussion 
+ 
+Part 2 – Choropleth Map and Its Pitfalls 
+Problem 
+Build a choropleth map for a regional variable and then critique its limitations. 
+Example questions 
+• 
+Which regions have highest disease rates? 
+• 
+Which counties have highest unemployment? 
+• 
+Which districts have highest literacy? 
+• 
+Which countries have highest child mortality? 
+
+Tasks 
+1. Create a choropleth map using normalized data. 
+2. Use an appropriate classification method: 
+o quantiles 
+o equal interval 
+o natural breaks 
+3. Compare at least two classification strategies. 
+4. Explain when the choropleth is misleading. 
+5. Discuss why absolute counts should usually not be mapped directly on choropleths. 
+Required analysis 
+Students must explicitly answer: 
+• 
+Why should ratio/rate data be preferred over raw counts? 
+• 
+How does region size affect interpretation? 
+• 
+What visual bias appears when large but sparsely populated regions dominate? 
+Output 
+• 
+2 choropleths 
+• 
+classification comparison 
+• 
+short critique 
+ 
+Part 3 – Proportional Symbol Map 
+Problem 
+Visualize point-based or aggregated magnitude data using proportional symbols. 
+Example questions 
+• 
+Which cities have the largest populations? 
+• 
+Where are earthquake magnitudes highest? 
+• 
+Which hospitals have the highest patient loads? 
+• 
+Which airports have the highest traffic? 
+Tasks 
+1. Plot symbol locations correctly. 
+2. Scale symbol size proportionally to magnitude. 
+
+3. Explain whether symbol area or symbol radius was used. 
+4. Reduce overlap using transparency, jitter, zoomed inset, or interactivity. 
+5. Compare the proportional symbol map with a choropleth for the same variable where 
+possible. 
+Required conceptual point 
+Students must explain why proportional symbol maps are often better than choropleths for point 
+phenomena or unevenly distributed data. 
+Output 
+• 
+1 static map 
+• 
+1 interactive map 
+• 
+short comparison paragraph 
+ 
+Part 4 – Flow Map / Movement Analysis 
+Problem 
+Model and visualize movement between places. 
+Example problems 
+Choose one: 
+• 
+migration between regions 
+• 
+airline routes 
+• 
+commuting flows 
+• 
+trade volumes 
+• 
+refugee movement 
+• 
+shipping routes 
+• 
+student movement between cities 
+Tasks 
+1. Create a flow map with origin-destination pairs. 
+2. Encode magnitude using line width. 
+3. Encode direction using arrows, color gradients, or annotations. 
+4. Filter clutter by showing top N flows or thresholding. 
+5. Identify a hub-and-spoke structure, corridor, or regional cluster. 
+
+Advanced requirement 
+Students must compute at least one of: 
+• 
+top inflow node 
+• 
+top outflow node 
+• 
+net flow 
+• 
+centrality using networkx 
+Output 
+• 
+1 flow map 
+• 
+1 network summary table 
+• 
+1 interpretation section 
+ 
+Part 5 – Continuous Field Mapping 
+Problem 
+Create a map for a continuous spatial variable using interpolation or contouring. 
+Example datasets 
+• 
+rainfall stations 
+• 
+temperature stations 
+• 
+air pollution measurements 
+• 
+elevation samples 
+• 
+groundwater depth 
+• 
+wind speed stations 
+Tasks 
+1. Start with point measurements. 
+2. Produce: 
+o a point map 
+o an interpolated surface or contour/isopleth map 
+3. Use interpolation such as: 
+o IDW 
+o grid interpolation 
+o radial basis 
+o scipy interpolation 
+4. Explain the assumptions and limitations. 
+
+5. Show where interpolation may be unreliable. 
+Required concept 
+Students must explain why contour/isopleth maps are suitable for continuous fields but not for 
+arbitrary region-based categorical data. 
+Output 
+• 
+point map 
+• 
+contour/isopleth map 
+• 
+interpretation 
+ 
+Part 6 – Cartogram or Alternative “Area 
+Correction” Map 
+Problem 
+Demonstrate how standard geographic size can distort interpretation, then fix it using an 
+alternative. 
+Example themes 
+• 
+election results 
+• 
+population by region 
+• 
+emissions by country 
+• 
+disease burden 
+• 
+GDP by country 
+• 
+parliamentary seats 
+Tasks 
+1. Show a standard geographic map. 
+2. Show an alternative representation: 
+o cartogram 
+o tile grid map 
+o hex map 
+o equal-area tile layout 
+3. Compare the message each map gives. 
+4. Discuss “size vs data effect.” 
+
+Required concept 
+Students must show that land area does not equal importance, people, votes, or emissions. 
+Output 
+• 
+original map 
+• 
+alternative corrected map 
+• 
+1-page critique 
+ 
+Part 7 – Case-Based Map Design Challenge 
+Students must solve three mini-scenarios by selecting the correct map type and implementing it. 
+Scenario A – Public Health 
+A health department wants to know: 
+• 
+where the disease burden is highest 
+• 
+whether cases cluster 
+• 
+whether the outbreak is spreading 
+Students must choose the best map type(s) and justify them. 
+Scenario B – Urban Services 
+A city wants to evaluate service accessibility to hospitals, schools, and bus stops. 
+Students must decide whether to use: 
+• 
+point map 
+• 
+service area map 
+• 
+proportional symbols 
+• 
+density map 
+• 
+flow map 
+Scenario C – Climate Risk 
+A researcher wants to compare flood risk and exposed population across districts. 
+Students must combine at least two layers: 
+
+• 
+hazard layer 
+• 
+population layer 
+• 
+optionally a choropleth or cartogram 
+Deliverable 
+For each scenario: 
+• 
+chosen map type 
+• 
+one reason why 
+• 
+one reason why another map type would be worse 
+• 
+implementation in Python 
+ 
+ 
+Minimum Technical Requirements 
+Students must demonstrate all of the following: 
+• 
+read at least 4 different spatial datasets 
+• 
+perform at least 2 dataset joins 
+• 
+handle at least 2 geometry types 
+• 
+reproject data at least 3 times 
+• 
+create at least 6 distinct maps 
+• 
+save high-resolution outputs 
+• 
+include legends, titles, source labels, and coordinate/projection notes 
+• 
+document assumptions and limitations 
+Suggested Dataset Combinations 
+Option 1 – U.S. Civic + Population + Weather 
+• 
+county shapefile 
+• 
+election/unemployment/population CSV 
+• 
+city points 
+• 
+NOAA weather station points 
+• 
+migration or commuting flows 
+Option 2 – Global Population + Emissions + Flights + 
+Climate 
+• 
+world countries shapefile 
+
+• 
+population by country 
+• 
+emissions by country 
+• 
+major airport coordinates 
+• 
+airline routes 
+• 
+temperature or rainfall data 
+Option 3 – Public Health + Mobility 
+• 
+administrative boundaries 
+• 
+disease rate by district 
+• 
+hospital locations 
+• 
+patient movement or ambulance trips 
+• 
+air quality or weather stations 
+ 
+ 
+Grading Rubric (200 Points) 
+1. Data Acquisition and Cleaning – 25 points 
+• 
+appropriate datasets chosen 
+• 
+correct preprocessing 
+• 
+joins and cleaning documented 
+2. Projection Understanding – 20 points 
+• 
+correct reprojection 
+• 
+thoughtful justification of projection choice 
+3. Choropleth Analysis – 20 points 
+• 
+correct variable normalization 
+• 
+good legend/classification 
+• 
+critique of limitations 
+4. Proportional Symbol Map – 30 points 
+• 
+correct scaling 
+• 
+overlap handling 
+• 
+clear interpretation 
+
+5. Flow Map – 20 points 
+• 
+meaningful OD mapping 
+• 
+readable design 
+• 
+quantitative interpretation 
+6. Continuous Field / Contour Map – 20 points 
+• 
+valid interpolation 
+• 
+correct reasoning for continuous field mapping 
+7. Cartogram / Alternative Area Correction – 20 points 
+• 
+good comparison with standard map 
+• 
+clear critique of land-area bias 
+8. Scenario-Based Design Decisions – 25 points 
+• 
+correct map type selection 
+• 
+strong reasoning 
+9. Report Quality – 10 points 
+• 
+clarity, structure, figure captions, citations 
+10. Code Quality and Reproducibility – 10 points 
+• 
+readable code 
+• 
+modular design 
+• 
+reproducible workflow 
+ 
+Extra Credit Ideas 
+Students can earn bonus marks for any of the following: 
+• 
+build an interactive dashboard 
+• 
+add hover tooltips 
+• 
+use animation for temporal flows 
+• 
+compare multiple basemaps 
+• 
+create a live web map 
+
+• 
+implement a custom tile map or hex map 
+• 
+use OSMnx for routing/network analysis 
+• 
+compute spatial autocorrelation (Moran’s I) 
+ 
+Recommended Submission Structure 
+Folder layout 
+assignment/ 
+│ 
+├── data/ 
+├── notebooks/ 
+├── scripts/ 
+├── outputs/ 
+│   ├── figures/ 
+│   └── interactive/ 
+├── report.pdf 
+└── README.md 
+ 
